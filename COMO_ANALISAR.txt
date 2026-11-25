@@ -1,0 +1,46 @@
+BANCO NBA - ESTATISTICAS DA TEMPORADA
+
+No pgAdmin, abra o Query Tool do banco nba. Atualize Tables e Views.
+As consultas prontas estao em sql/analysis_examples.sql.
+
+Tabelas:
+players: identificacao dos jogadores.
+player_game_stats: jogador, time e estatisticas em cada partida.
+team_game_stats: estatisticas de cada time em cada partida.
+games: jogos, temporada, tipo da competicao, placares e horarios UTC.
+raw_game_data: snapshots JSON de auditoria; repeticoes sao intencionais.
+pipeline_runs: execucoes e falhas.
+
+Views:
+player_game_analysis: estatisticas com nomes e percentuais eFG e TS.
+player_team_history: times observados por jogador e temporada. Nao e um
+cadastro contratual nem o elenco atual; registra participacoes nos box scores.
+
+Para atualizar ou retomar, no terminal na pasta do projeto:
+.\.venv\Scripts\python.exe -m src.season --season 2026-27
+
+Jogos completos ja salvos sao ignorados. Para buscar correcoes da fonte:
+.\.venv\Scripts\python.exe -m src.season --season 2026-27 --refresh
+
+Para conferir integridade e repetir um snapshot sem duplicar estatisticas:
+.\.venv\Scripts\python.exe -X utf8 -m src.verify_season
+
+A carga procura jogos encerrados de Regular Season, Playoffs e PlayIn.
+Pre-temporada e All-Star nao estao incluidos. Novos jogos exigem nova execucao;
+nenhum agendamento automatico foi configurado.
+
+Cada jogo e salvo em uma transacao: jogadores, times, estatisticas e JSON.
+Se um jogo falhar, os outros permanecem salvos; execute novamente para retomar.
+Ha tres tentativas por jogo e pausas entre consultas. Falhas ficam em pipeline_runs.
+
+Somente played=true entra nas medias. DNP pode estar no box score com zeros.
+Minutos sao decimais: 33m15s = 33.25. IDs de jogos preservam zeros iniciais.
+eFG% = 100 * (FGM + 0.5 * 3PM) / FGA.
+TS% = 100 * PTS / (2 * (FGA + 0.44 * FTA)).
+Denominadores zero retornam NULL. TS e uma estimativa baseada em box score.
+Percentuais da temporada devem ser calculados dos totais, nao da media simples.
+Estas metricas nao equivalem a todas as estatisticas avancadas oficiais da NBA.
+
+Fonte: NBA.com via biblioteca comunitaria nba_api.
+Nunca envie .env ou sua senha ao GitHub. Esta pasta esta no OneDrive;
+o .gitignore nao impede a sincronizacao do .env pelo OneDrive.

@@ -1,0 +1,37 @@
+ORGANIZACAO DO HISTORICO
+
+Dados fisicos: public (tabelas unificadas; season e season_type identificam a competicao).
+Analises entre temporadas: analytics.player_games e analytics.player_season_averages.
+No pgAdmin, Refresh em Schemas. Cada season_YYYY_YY contem Views, nao copias de tabelas:
+games, player_stats, team_stats, player_averages, player_teams.
+As views refletem automaticamente as tabelas centrais.
+
+Escopo: nove temporadas completas anteriores a 2026-27:
+2017-18, 2018-19, 2019-20, 2020-21, 2021-22, 2022-23, 2023-24, 2024-25 e 2025-26.
+Temporadas regulares encurtadas: 2019-20 (1059 jogos) e 2020-21 (1080 jogos).
+PlayIn: inexistente em 2017-18 e 2018-19; um jogo em 2019-20; seis a partir de 2020-21.
+Tipos: Regular Season, Playoffs e PlayIn. Nao mistura pre-temporada ou All-Star.
+As finais da NBA Cup que nao contam para a temporada regular nao estao cobertas
+por esta importacao de LeagueGameLog.
+
+Fonte: NBA.com via nba_api.LeagueGameLog. Respostas originais guardadas em
+public.historical_imports, com contagens, identificador da execucao e checkpoint.
+Uma transacao por temporada/tipo. A carga confere dois times e soma dos pontos
+individuais por jogo. Chaves impedem duplicatas.
+
+Historico em lote nao fornece titularidade, posicao ou horario exato: esses
+campos permanecem NULL quando nao conhecidos. Data do jogo: games.game_date;
+nas views de analise: game_date. Nao use game_time_utc para filtrar o historico.
+Minutos preservam a precisao fornecida pelo endpoint, que pode ser arredondada.
+LeagueGameLog lista atuacoes; nao inventamos registros DNP.
+O schema atual conserva os box scores completos ja coletados para 2026-27.
+Nomes de times na tabela teams sao referencias atuais; nomes originais estao no JSON.
+
+Retomar a carga (lotes completos sao ignorados):
+.\.venv\Scripts\python.exe -X utf8 -m src.history
+Auditar:
+.\.venv\Scripts\python.exe -X utf8 -m src.audit_history
+
+Consultas prontas: sql/historical_examples.sql.
+Medias por temporada incluem todos os times do jogador; season_type fica separado.
+O historico de lesoes ainda nao faz parte desta base.

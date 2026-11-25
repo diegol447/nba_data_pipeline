@@ -1,0 +1,59 @@
+# Credenciais locais (somente o exemplo pode ser publicado)
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.pfx
+*.p12
+.pgpass
+pgpass.conf
+
+# Ambiente virtual e caches Python
+.venv/
+venv/
+env/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+*.egg-info/
+build/
+dist/
+.ipynb_checkpoints/
+
+# Dados coletados, logs e exportacoes locais
+data/
+logs/
+backups/
+dumps/
+*.log
+*.dump
+*.backup
+*.bak
+*.sqlite
+*.sqlite3
+*.db
+*.csv
+*.parquet
+*.zip
+
+# Relatorios podem conter dados importados
+*.pbix
+*.pbit
+.pbi/
+
+# Configuracoes locais e arquivos temporarios
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+desktop.ini
+*.tmp
+*.swp
+
+# Mantenha os scripts de estrutura em sql/ versionados.
+# Dumps SQL devem ficar em backups/ ou dumps/, nunca em sql/.
